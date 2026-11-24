@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  title: Task Management API
+  version: 1.0.0
+  description: REST API for managing tasks with Node.js, Express, and MongoDB
+
+servers:
+  - url: http://localhost:5001
+  - url: http://localhost:5000
+
+paths:
+  /api/tasks:
+    get:
+      summary: Get all tasks
+      responses:
+        '200':
+          description: List of all tasks
+        '500':
+          description: Server error
+    post:
+      summary: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '201':
+          description: Task created
+        '400':
+          description: Missing title or invalid field value
+        '409':
+          description: Duplicate task conflict
+        '500':
+          description: Server error
+
+  /api/tasks/{id}:
+    get:
+      summary: Get a task by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task found
+        '400':
+          description: Invalid ID format
+        '404':
+          description: Task not found
+        '500':
+          description: Server error
+    put:
+      summary: Update a task by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '200':
+          description: Task updated
+        '400':
+          description: Validation error or invalid ID
+        '404':
+          description: Task not found
+        '409':
+          description: Duplicate task conflict
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a task by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Task deleted (no content)
+        '400':
+          description: Invalid ID format
+        '404':
+          description: Task not found
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    Task:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          example: Finish API documentation
+        description:
+          type: string
+          example: Add Swagger UI to Express server
+        assignedTo:
+          type: string
+          example: Rajkumar
+        priority:
+          type: string
+          enum: [low, medium, high]
+          example: high
+        status:
+          type: string
+          enum: [pending, in-progress, completed]
+          example: pending
